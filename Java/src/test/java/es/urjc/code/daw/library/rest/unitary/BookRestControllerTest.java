@@ -1,4 +1,4 @@
-package es.urjc.code.daw.library.rest;
+package es.urjc.code.daw.library.rest.unitary;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -70,7 +70,8 @@ public class BookRestControllerTest {
             post(BOOKS_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(book)))
-            .andExpect(status().is(UNAUTHORIZED_STATUS));
+            .andExpect(status().is(UNAUTHORIZED_STATUS))
+            .andExpect(status().reason("Unauthorized"));
     }
 
     @Test
@@ -108,7 +109,8 @@ public class BookRestControllerTest {
     public void givenNotLoggedUserWhenDeleteBookThenUnauthorized() throws Exception {
         mockMvc.perform(
             delete(BOOKS_ENDPOINT + "1"))
-            .andExpect(status().is(UNAUTHORIZED_STATUS));
+            .andExpect(status().is(UNAUTHORIZED_STATUS))
+            .andExpect(status().reason("Unauthorized"));
     }
 
     @Test
@@ -117,7 +119,8 @@ public class BookRestControllerTest {
     public void givenLoggedUserWhenDeleteBookThenForbidden() throws Exception {
         mockMvc.perform(
             delete(BOOKS_ENDPOINT + "1"))
-            .andExpect(status().is(FORBIDDEN_STATUS));
+            .andExpect(status().is(FORBIDDEN_STATUS))
+            .andExpect(status().reason("Forbidden"));
     }
 
     @Test
@@ -136,5 +139,6 @@ public class BookRestControllerTest {
             throw new RuntimeException(e);
         }
     }
+
 
 }
