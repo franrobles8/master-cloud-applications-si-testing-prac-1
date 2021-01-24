@@ -1,0 +1,22 @@
+{
+  "name": "practica1_enunciado",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest --runTestsByPath"
+  },
+  "author": "Michel Maes",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.618.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "supertest": "^6.1.1",
+    "testcontainers": "^7.0.0"
+  }
+}
