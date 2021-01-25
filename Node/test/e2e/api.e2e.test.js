@@ -4,6 +4,7 @@ const app = require('../../src/app');
 const AWS = require('aws-sdk');
 const createTableIfNotExist = require('../../src/db/createTable');
 
+const request = supertest(app);
 let dynamoContainer;
 const setData = async (request) => {
     const film = { title: 'Title 1', year : 2000, director: 'Director 1'};
@@ -22,12 +23,10 @@ describe('Tests container', () => {
 
         AWS.config.update({
             region: process.env.AWS_REGION || 'local',
-            endpoint: process.env.AWS_DYNAMO_ENDPOINT || `http://localhost:${dynamoPort}`,
+            endpoint: process.env.AWS_DYNAMO_ENDPOINT || `http://localhost:8000`,
             accessKeyId: "xxxxxx", // No es necesario poner nada aquí
             secretAccessKey: "xxxxxx" // No es necesario poner nada aquí
         });
-
-        request = supertest(app);
         await createTableIfNotExist('films');
         await setData(request);
     });
@@ -37,7 +36,7 @@ describe('Tests container', () => {
     });
 
     test('Recuperar todas las películas', async () => {
-        const response = await request.get('/api/films').expect(200);
+        const response = await request.get('/api/films').timeout(10000).expect(200);
         const [{title, id}] = response.body;
 
         expect(response.statusCode).toBe(200);

@@ -26,10 +26,16 @@ const getMockedMovie = (number) => data.Items[number];
 describe('Unit tests', () => {
 
     beforeAll(() => {
-        jest.mock('aws-sdk');
-        AWS.DynamoDB.DocumentClient.prototype.get.mockImplementation((_, cb) => {
+        const put = (params, cb) => {
+                const error = Object.keys(params.Item).length <= 1? new Error('Mocked module error') : null;
+                cb(error, params.Item);
+            };
+
+        const scan = (params, cb)=> {
             cb(null, data);
-        });
+        };
+    
+        AWS.DynamoDB.DocumentClient = jest.fn().mockReturnValue({ put, scan });
     });
 
     afterAll(() => {
