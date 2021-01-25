@@ -6,7 +6,8 @@ const createTableIfNotExist = require('../../src/db/createTable');
 
 const request = supertest(app);
 let dynamoContainer;
-const setData = async (request) => {
+
+const setData = async () => {
     const film = { title: 'Title 1', year : 2000, director: 'Director 1'};
     await request.post('/api/films').send(film).expect(201);
 }
@@ -23,12 +24,12 @@ describe('Tests container', () => {
 
         AWS.config.update({
             region: process.env.AWS_REGION || 'local',
-            endpoint: process.env.AWS_DYNAMO_ENDPOINT || `http://localhost:8000`,
+            endpoint: process.env.AWS_DYNAMO_ENDPOINT || `http://localhost:${dynamoPort}`,
             accessKeyId: "xxxxxx", // No es necesario poner nada aquí
             secretAccessKey: "xxxxxx" // No es necesario poner nada aquí
         });
         await createTableIfNotExist('films');
-        await setData(request);
+        await setData();
     });
 
     afterAll(async () => {
@@ -36,13 +37,13 @@ describe('Tests container', () => {
     });
 
     test('Recuperar todas las películas', async () => {
-        const response = await request.get('/api/films').timeout(10000).expect(200);
+        const response = await request.get('/api/films').timeout(15000).expect(200);
         const [{title, id}] = response.body;
 
         expect(response.statusCode).toBe(200);
         expect(id).toBe(0);
         expect(title).toBe('Title 1');
-    });
+    }, 15000);
 
     test('Añadir una nueva película', async () => {
         const film = { title: 'Title 2', year : 2000, director: 'Director 2'};
@@ -54,5 +55,5 @@ describe('Tests container', () => {
         expect(year).toBe(film.year);
         expect(director).toBe(film.director);
         expect(response.statusCode).toBe(201);
-    });
+    }, 15000);
 });
